@@ -641,7 +641,7 @@
     const painLevel = document.getElementById('pain-slider').value;
     const userMsg = `포지션: ${pos}\n레벨: ${level}${age ? '\n나이: ' + age + '세' : ''}${mode === 'medical' ? '\n통증 강도: ' + painLevel + '/10 (' + painDescs[painLevel] + ')' : ''}\n\n${mode === 'medical' ? '증상/통증' : '기술적 문제'}: ${input}`;
 
-    const OPENROUTER_KEY = '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';
+    const OPENROUTER_KEY = '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';
 
     try {
       const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
