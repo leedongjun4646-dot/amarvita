@@ -653,7 +653,7 @@
           'X-Title': 'AMAR VITA'
         },
         body: JSON.stringify({
-          model: 'google/gemini-2.0-flash-exp:free',
+          model: 'meta-llama/llama-3.1-8b-instruct:free',
           messages: [
             { role: 'system', content: mode === 'medical' ? systemMedical : systemTech },
             { role: 'user', content: userMsg }
