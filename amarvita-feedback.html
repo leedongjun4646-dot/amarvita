@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMAR VITA — AI 피드백</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0f0d0b;
+    --bg2:       #181410;
+    --bg3:       #211c17;
+    --border:    rgba(180,140,80,0.18);
+    --border2:   rgba(180,140,80,0.35);
+    --gold:      #c8a96e;
+    --gold-dim:  #8a6f3e;
+    --text:      #e8dece;
+    --text-dim:  #8a7d6a;
+    --text-faint:#4a4237;
+    --red-bg:    rgba(160,40,40,0.15);
+    --red-text:  #e07070;
+    --red-border:rgba(160,40,40,0.35);
+    --blue-bg:   rgba(40,80,160,0.15);
+    --blue-text: #7aabee;
+    --blue-border:rgba(40,80,160,0.35);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 56px 24px 40px;
+    text-align: center;
+    border-bottom: 0.5px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(200,169,110,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .brand-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 8vw, 52px);
+    font-weight: 500;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .brand-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    margin-bottom: 28px;
+  }
+  .hero-tagline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(14px, 3.5vw, 18px);
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto;
+    opacity: 0.85;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px;
+    margin: 32px 0 0;
+  }
+  .divider-line { flex: 1; height: 0.5px; background: var(--border); }
+  .divider-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold-dim); }
+
+  /* ── MAIN FORM ── */
+  .form-wrap {
+    padding: 32px 24px 48px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 12px;
+    font-weight: 400;
+  }
+
+  /* MODE TABS */
+  .mode-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 0.5px solid var(--border2);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .mode-tab {
+    padding: 13px 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: all 0.2s;
+    border-right: 0.5px solid var(--border2);
+    letter-spacing: 0.02em;
+  }
+  .mode-tab:last-child { border-right: none; }
+  .mode-tab svg { width: 16px; height: 16px; stroke-width: 1.5; }
+  .mode-tab.active-medical {
+    background: var(--red-bg);
+    color: var(--red-text);
+  }
+  .mode-tab.active-tech {
+    background: var(--blue-bg);
+    color: var(--blue-text);
+  }
+
+  /* POSITION PILLS */
+  .pos-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 24px;
+  }
+  .pos-pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 0.5px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .pos-pill.active {
+    border-color: var(--gold-dim);
+    color: var(--gold);
+    background: rgba(200,169,110,0.08);
+  }
+
+  /* FIELDS */
+  .fields-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .field-box {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    transition: border-color 0.15s;
+  }
+  .field-box:focus-within { border-color: var(--border2); }
+  .field-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 5px;
+    font-weight: 400;
+  }
+  .field-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+  }
+  .field-input option { background: #1a1510; }
+
+  /* TEXTAREA */
+  .textarea-box {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    transition: border-color 0.15s;
+  }
+  .textarea-box:focus-within { border-color: var(--border2); }
+  .textarea-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+  .main-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.75;
+    resize: none;
+    min-height: 120px;
+  }
+  .main-textarea::placeholder { color: var(--text-faint); }
+
+  /* SUBMIT */
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    color: var(--bg);
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-bottom: 28px;
+  }
+  .submit-btn:hover { opacity: 0.88; }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+  /* RESULT */
+  .result-wrap {
+    display: none;
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .result-wrap.visible { display: block; animation: fadeUp 0.35s ease; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+  .result-header {
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .result-header.medical { background: var(--red-bg); }
+  .result-header.tech { background: var(--blue-bg); }
+  .result-badge-text {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .result-header.medical .result-badge-text { color: var(--red-text); }
+  .result-header.tech .result-badge-text { color: var(--blue-text); }
+  .result-header svg { width: 15px; height: 15px; stroke-width: 1.8; }
+  .result-header.medical svg { stroke: var(--red-text); }
+  .result-header.tech svg { stroke: var(--blue-text); }
+
+  .result-body {
+    padding: 20px 18px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.85;
+    white-space: pre-wrap;
+    font-weight: 300;
+  }
+
+  /* LOADING DOTS */
+  .dots { display: flex; gap: 5px; align-items: center; padding: 4px 0; }
+  .dot {
+    width: 5px; height: 5px; border-radius: 50%; background: var(--gold-dim);
+    animation: pulse 1.3s infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,80%,100%{opacity:0.2;transform:scale(0.8)} 40%{opacity:1;transform:scale(1)} }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 28px 24px 48px;
+    border-top: 0.5px solid var(--border);
+  }
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: var(--gold-dim);
+    letter-spacing: 0.14em;
+    margin-bottom: 6px;
+  }
+  .footer-copy {
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.04em;
+  }
+
+  /* PAIN SLIDER */
+  .pain-box {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .pain-track-wrap { margin-bottom: 10px; }
+  #pain-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border2);
+    outline: none;
+    margin-bottom: 8px;
+  }
+  #pain-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+  }
+  #pain-slider::-moz-range-thumb {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+  }
+  .pain-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-faint);
+    padding: 0 2px;
+  }
+  .pain-desc-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .pain-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--gold);
+    min-width: 28px;
+  }
+  .pain-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.03em;
+  }
+
+  @media (max-width: 400px) {
+    .fields-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <p class="brand-eyebrow">Baseball Performance · Injury Prevention</p>
+  <h1 class="brand-name">AMAR VITA</h1>
+  <p class="brand-sub">AI 선수 피드백 시스템</p>
+  <p class="hero-tagline">우리도 던졌고, 우리도 다쳤습니다.<br>당신의 몸과 기술을 함께 지킵니다.</p>
+</header>
+
+<div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+<!-- FORM -->
+<main class="form-wrap">
+
+  <p class="section-eyebrow">피드백 유형</p>
+  <div class="mode-tabs">
+    <button class="mode-tab active-medical" id="btn-medical" onclick="setMode('medical')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      메디컬 피드백
+    </button>
+    <button class="mode-tab" id="btn-tech" onclick="setMode('tech')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      기술 피드백
+    </button>
+  </div>
+
+  <p class="section-eyebrow">포지션</p>
+  <div class="pos-row">
+    <button class="pos-pill active" onclick="setPos(this,'투수')">투수</button>
+    <button class="pos-pill" onclick="setPos(this,'포수')">포수</button>
+    <button class="pos-pill" onclick="setPos(this,'1루수')">1루수</button>
+    <button class="pos-pill" onclick="setPos(this,'2루수')">2루수</button>
+    <button class="pos-pill" onclick="setPos(this,'3루수')">3루수</button>
+    <button class="pos-pill" onclick="setPos(this,'유격수')">유격수</button>
+    <button class="pos-pill" onclick="setPos(this,'외야수')">외야수</button>
+    <button class="pos-pill" onclick="setPos(this,'지명타자')">지명타자</button>
+  </div>
+
+  <div class="fields-row">
+    <div class="field-box">
+      <div class="field-label">나이</div>
+      <input class="field-input" type="number" id="age" placeholder="예: 21" min="10" max="45">
+    </div>
+    <div class="field-box">
+      <div class="field-label">레벨</div>
+      <select class="field-input" id="level">
+        <option value="중학교">중학교</option>
+        <option value="고등학교">고등학교</option>
+        <option value="대학교" selected>대학교</option>
+        <option value="사회인">사회인</option>
+        <option value="독립리그">독립리그</option>
+        <option value="프로">프로</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="pain-box" id="pain-box">
+    <div class="field-label" style="margin-bottom:12px;">통증 강도</div>
+    <div class="pain-track-wrap">
+      <input type="range" min="1" max="10" value="5" id="pain-slider" oninput="updatePain(this.value)">
+      <div class="pain-labels">
+        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+        <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+      </div>
+    </div>
+    <div class="pain-desc-row">
+      <span class="pain-num" id="pain-num">5</span>
+      <span class="pain-desc" id="pain-desc">중간 정도의 통증</span>
+    </div>
+  </div>
+
+  <div class="textarea-box">
+    <div class="textarea-label" id="textarea-label">증상 / 통증 설명</div>
+    <textarea class="main-textarea" id="main-input" rows="6"
+      placeholder="예: 투구 후 팔꿈치 안쪽에 통증이 있어요. 릴리즈 직전에 심해지고, 2이닝 이후부터 느껴집니다. 쉬면 괜찮아지는데 던지면 다시 아파요."></textarea>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" onclick="getFeedback()">
+    AI 피드백 받기
+  </button>
+
+  <div class="result-wrap" id="result-wrap">
+    <div class="result-header medical" id="result-header">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" id="result-icon"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="result-badge-text" id="result-badge-text">메디컬 분석</span>
+    </div>
+    <div class="result-body" id="result-body">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p class="footer-brand">AMAR VITA</p>
+  <p class="footer-copy">이 피드백은 참고용이며 전문 의료 진단을 대체하지 않습니다.</p>
+</footer>
+
+<script>
+  const painDescs = {
+    1: '거의 느끼지 못할 정도',
+    2: '약하게 느껴지는 통증',
+    3: '신경 쓰이지만 참을 만함',
+    4: '활동에 약간 지장이 있음',
+    5: '중간 정도의 통증',
+    6: '집중이 어려울 정도',
+    7: '활동이 힘들어지는 통증',
+    8: '매우 심한 통증',
+    9: '거의 움직이기 어려움',
+    10: '극심한 통증 — 즉시 병원 필요'
+  };
+
+  function updatePain(val) {
+    document.getElementById('pain-num').textContent = val;
+    document.getElementById('pain-desc').textContent = painDescs[val];
+    const pct = (val - 1) / 9;
+    const r = Math.round(pct * 160 + 80);
+    const g = Math.round((1 - pct) * 120 + 40);
+    document.getElementById('pain-num').style.color =
+      val <= 3 ? '#7aaa88' : val <= 6 ? 'var(--gold)' : '#e07070';
+  }
+
+  let mode = 'medical';
+  let pos = '투수';
+
+  function setMode(m) {
+    mode = m;
+    const med = document.getElementById('btn-medical');
+    const tech = document.getElementById('btn-tech');
+    const label = document.getElementById('textarea-label');
+    const ta = document.getElementById('main-input');
+    const rh = document.getElementById('result-header');
+    const rb = document.getElementById('result-badge-text');
+    const ri = document.getElementById('result-icon');
+
+    if (m === 'medical') {
+      med.className = 'mode-tab active-medical';
+      tech.className = 'mode-tab';
+      label.textContent = '증상 / 통증 설명';
+      ta.placeholder = '예: 투구 후 팔꿈치 안쪽에 통증이 있어요. 릴리즈 직전에 심해지고, 2이닝 이후부터 느껴집니다. 쉬면 괜찮아지는데 던지면 다시 아파요.';
+      rh.className = 'result-header medical';
+      rb.textContent = '메디컬 분석';
+      ri.innerHTML = '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>';
+      document.getElementById('pain-box').style.display = 'block';
+    } else {
+      tech.className = 'mode-tab active-tech';
+      med.className = 'mode-tab';
+      label.textContent = '기술적 문제 / 개선하고 싶은 점';
+      ta.placeholder = '예: 직구 구속이 130km대에서 정체되어 있고, 릴리즈 포인트가 일정하지 않아서 제구가 불안정합니다. 특히 1루 쪽으로 빠지는 경향이 있어요.';
+      rh.className = 'result-header tech';
+      rb.textContent = '기술 분석';
+      ri.innerHTML = '<circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>';
+      document.getElementById('pain-box').style.display = 'none';
+    }
+    document.getElementById('result-wrap').classList.remove('visible');
+  }
+
+  function setPos(el, p) {
+    pos = p;
+    document.querySelectorAll('.pos-pill').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  async function getFeedback() {
+    const input = document.getElementById('main-input').value.trim();
+    const age = document.getElementById('age').value;
+    const level = document.getElementById('level').value;
+    if (!input) { document.getElementById('main-input').focus(); return; }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = '분석 중...';
+
+    const wrap = document.getElementById('result-wrap');
+    const body = document.getElementById('result-body');
+    wrap.classList.add('visible');
+    body.innerHTML = '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    const systemMedical = `당신은 AMAR VITA의 야구 전문 스포츠 메디컬 코치입니다. 스포츠의학, 정형외과, 재활의학 분야의 최신 연구를 바탕으로 선수에게 실질적인 도움을 줍니다.
+
+답변 구성 (아래 순서와 제목을 그대로 사용하세요):
+
+[어떤 문제일까요?]
+증상의 해부학적 구조와 원인을 설명하세요. 관련된 근육, 인대, 건, 신경 이름을 구체적으로 언급하고, 왜 야구 투구/동작에서 이 부위에 스트레스가 집중되는지 역학적으로 설명하세요. 일반인도 이해할 수 있는 비유나 쉬운 표현을 함께 사용하세요.
+
+[연구에서는 뭐라고 하나요?]
+이 증상/부상과 관련된 실제 스포츠의학 연구나 임상 데이터를 2~3가지 인용하세요. 예: 발표 연도, 저널명, 핵심 발견. 연구 내용을 쉬운 말로 풀어서 설명하세요. 없으면 교과서적 근거(AAOS, AOSSM 가이드라인 등)를 활용하세요.
+
+[지금 당장 해야 할 것]
+통증 강도와 상황에 맞는 즉각적인 조치를 구체적으로 안내하세요. PRICE/POLICE 원칙, 아이싱 방법(몇 분, 하루 몇 회), 활동 제한 범위 등을 명확히 설명하세요.
+
+[재활 & 예방 운동]
+이 부위를 위한 스트레칭과 강화 운동을 3~4가지 제시하세요. 각 운동마다 이름, 방법(세트/횟수), 왜 이 운동이 도움이 되는지 근거를 포함하세요.
+
+[병원에 가야 할 신호]
+즉시 병원에 가야 하는 위험 신호(red flag)를 명확히 알려주세요. 통증 강도가 7 이상이거나 심각한 부상 가능성이 있으면 강하게 권고하세요.
+
+작성 원칙:
+- 반드시 한국어로, 선수에게 직접 말하듯 따뜻하고 친근하게
+- 전문 용어는 반드시 괄호 안에 쉬운 설명 병기 (예: UCL(팔꿈치 안쪽 인대))
+- 마크다운 기호(**, ## 등) 사용 금지, 일반 텍스트만
+- 각 섹션 제목은 대괄호 [] 형식 유지
+- 충분히 자세하게, 최소 400자 이상 작성`;
+
+    const systemTech = `당신은 AMAR VITA의 야구 기술 전문 코치입니다. 바이오메카닉스, 운동역학, 스포츠과학 연구를 바탕으로 선수의 기술적 문제를 분석합니다.
+
+답변 구성 (아래 순서와 제목을 그대로 사용하세요):
+
+[무엇이 문제인가요?]
+선수가 설명한 기술적 문제의 핵심 원인을 운동역학 관점에서 설명하세요. 투구/타격/수비 메커니즘 중 어느 단계(wind-up, cocking, acceleration, deceleration, follow-through 등)에서 문제가 발생하는지 구체적으로 짚어주세요. 쉬운 비유를 활용하세요.
+
+[연구에서는 뭐라고 하나요?]
+이 기술적 문제와 관련된 바이오메카닉스 연구나 MLB/NPB 데이터, 코칭 과학 연구를 2~3가지 인용하세요. 연구 결과를 쉬운 말로 풀어서 어떻게 적용할 수 있는지 설명하세요.
+
+[핵심 수정 포인트]
+고쳐야 할 동작을 2~3가지로 압축해서 설명하세요. 각 포인트마다 현재 문제 동작 → 이상적인 동작 → 왜 그래야 하는지 근거를 함께 제시하세요.
+
+[추천 드릴]
+바로 실천할 수 있는 드릴 3~4가지를 제시하세요. 각 드릴마다 이름, 방법(세트/횟수/강도), 어떤 감각을 느껴야 하는지, 이 드릴이 왜 효과적인지 설명하세요.
+
+[조심해야 할 것]
+이 문제를 교정하는 과정에서 생기기 쉬운 보상동작(compensation)이나 부상 위험을 경고하세요. 특히 무리하게 교정하려다 생기는 문제를 짚어주세요.
+
+작성 원칙:
+- 반드시 한국어로, 선수에게 직접 말하듯 실용적이고 명확하게
+- 전문 용어는 반드시 괄호 안에 쉬운 설명 병기
+- 마크다운 기호(**, ## 등) 사용 금지, 일반 텍스트만
+- 각 섹션 제목은 대괄호 [] 형식 유지
+- 충분히 자세하게, 최소 400자 이상 작성`;
+
+    const painLevel = document.getElementById('pain-slider').value;
+    const userMsg = `포지션: ${pos}\n레벨: ${level}${age ? '\n나이: ' + age + '세' : ''}${mode === 'medical' ? '\n통증 강도: ' + painLevel + '/10 (' + painDescs[painLevel] + ')' : ''}\n\n${mode === 'medical' ? '증상/통증' : '기술적 문제'}: ${input}`;
+
+    const GEMINI_KEY = 'AQ.Ab8RN6IUtuX8N0wFJJ3opRiA21Zwdy-MNiMysyz_QVgaa06Ixw';
+    const fullPrompt = (mode === 'medical' ? systemMedical : systemTech) + '\n\n' + userMsg;
+
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: fullPrompt }] }],
+            generationConfig: { maxOutputTokens: 2500, temperature: 0.7 }
+          })
+        }
+      );
+      const data = await res.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '피드백을 불러올 수 없습니다.';
+      const html = text
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\[([^\]]+)\]/g, '<span style="display:block;margin-top:20px;margin-bottom:6px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-dim);font-weight:400;">$1</span>');
+      body.innerHTML = '<div style="font-size:14px;color:var(--text);line-height:1.85;font-weight:300;">' + html + '</div>';
+    } catch (e) {
+      body.textContent = '오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'AI 피드백 받기';
+  }
+</script>
+</body>
+</html>
