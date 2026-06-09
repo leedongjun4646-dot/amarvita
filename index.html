@@ -641,23 +641,28 @@
     const painLevel = document.getElementById('pain-slider').value;
     const userMsg = `포지션: ${pos}\n레벨: ${level}${age ? '\n나이: ' + age + '세' : ''}${mode === 'medical' ? '\n통증 강도: ' + painLevel + '/10 (' + painDescs[painLevel] + ')' : ''}\n\n${mode === 'medical' ? '증상/통증' : '기술적 문제'}: ${input}`;
 
-    const GEMINI_KEY = 'AQ.Ab8RN6IUtuX8N0wFJJ3opRiA21Zwdy-MNiMysyz_QVgaa06Ixw';
-    const fullPrompt = (mode === 'medical' ? systemMedical : systemTech) + '\n\n' + userMsg;
+    const OPENROUTER_KEY = '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';
 
     try {
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: fullPrompt }] }],
-            generationConfig: { maxOutputTokens: 2500, temperature: 0.7 }
-          })
-        }
-      );
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENROUTER_KEY}`,
+          'HTTP-Referer': 'https://leedongjun4646.github.io/amarvita',
+          'X-Title': 'AMAR VITA'
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.0-flash-exp:free',
+          messages: [
+            { role: 'system', content: mode === 'medical' ? systemMedical : systemTech },
+            { role: 'user', content: userMsg }
+          ],
+          max_tokens: 2500
+        })
+      });
       const data = await res.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '피드백을 불러올 수 없습니다.';
+      const text = data.choices?.[0]?.message?.content || '피드백을 불러올 수 없습니다.';
       const html = text
         .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
         .replace(/\[([^\]]+)\]/g, '<span style="display:block;margin-top:20px;margin-bottom:6px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-dim);font-weight:400;">$1</span>');
